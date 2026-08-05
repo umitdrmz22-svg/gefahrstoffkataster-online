@@ -1,0 +1,1 @@
+{"name":"gefahrstoffkataster-online","private":true,"scripts":{"test":"node tests/smoke.test.js"}}
