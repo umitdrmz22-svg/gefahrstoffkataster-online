@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Online-Gefahrstoffkataster mit SDB-, GBU-, BA- und Substitutionsstatus.">
+  <title>Gefahrstoffkataster Online</title>
+  <link rel="stylesheet" href="assets/style.css?v=1">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="./"><span class="brand-mark">G</span><span>Gefahrstoffkataster <b>Online</b></span></a>
+    <div class="top-actions">
+      <span id="connectionBadge" class="badge demo">Demo-Modus</span>
+      <button id="authButton" class="btn ghost" type="button">Anmelden</button>
+      <button id="logoutButton" class="btn ghost hidden" type="button">Abmelden</button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <aside class="sidebar">
+      <div class="org-card">
+        <small>ORGANISATION</small>
+        <strong id="orgName">Demo-Unternehmen</strong>
+        <span id="userLabel">Lokale Testdaten</span>
+      </div>
+      <nav>
+        <button class="nav-item active" data-view="register">Gefahrstoffkataster</button>
+        <button class="nav-item" data-view="review">Prüfstatus</button>
+        <button class="nav-item" data-view="settings">Stammdaten</button>
+      </nav>
+      <div class="sidebar-note">
+        <strong>Mindestinhalt</strong>
+        <span>Bezeichnung, Einstufung/Eigenschaften, Mengenbereich, exponierte Arbeitsbereiche und SDB-Verweis.</span>
+      </div>
+    </aside>
+
+    <section class="content">
+      <div class="page-head">
+        <div>
+          <p class="eyebrow">GEFAHRSTOFFMANAGEMENT</p>
+          <h1>Gefahrstoffkataster</h1>
+          <p>Stoffe und Gemische online verwalten, Prüfstände erkennen und SDB, GBU, BA sowie Substitutionsprüfung zusammenführen.</p>
+        </div>
+        <button id="newSubstance" class="btn primary" type="button">+ Gefahrstoff anlegen</button>
+      </div>
+
+      <section class="metrics" aria-label="Kennzahlen">
+        <article><span>Aktive Stoffe</span><strong id="metricActive">0</strong></article>
+        <article><span>SDB-Prüfung fällig</span><strong id="metricSds">0</strong></article>
+        <article><span>GBU offen</span><strong id="metricGbu">0</strong></article>
+        <article><span>Substitution offen</span><strong id="metricSubstitution">0</strong></article>
+      </section>
+
+      <section class="toolbar">
+        <label class="search"><span>⌕</span><input id="searchInput" placeholder="Produkt, Hersteller, Kataster-Nr., Arbeitsbereich …"></label>
+        <select id="filterStatus" aria-label="Status filtern">
+          <option value="">Alle Status</option>
+          <option value="active">Aktiv</option>
+          <option value="blocked">Gesperrt</option>
+          <option value="archived">Archiviert</option>
+        </select>
+        <select id="filterReview" aria-label="Prüfstatus filtern">
+          <option value="">Alle Prüfstände</option>
+          <option value="sds_due">SDB-Prüfung fällig</option>
+          <option value="gbu_open">GBU offen</option>
+          <option value="ba_open">BA offen</option>
+          <option value="sub_open">Substitution offen</option>
+        </select>
+      </section>
+
+      <section class="table-card">
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Kataster-Nr.</th><th>Produkt</th><th>GHS</th><th>Arbeitsbereich</th><th>Mengenbereich</th><th>SDB</th><th>GBU</th><th>BA</th><th>Substitution</th><th></th></tr></thead>
+            <tbody id="substanceRows"></tbody>
+          </table>
+        </div>
+        <div id="emptyState" class="empty hidden"><strong>Keine passenden Einträge</strong><span>Filter anpassen oder einen neuen Gefahrstoff anlegen.</span></div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="authDialog" class="dialog small-dialog">
+    <form id="authForm" method="dialog" class="dialog-card">
+      <div class="dialog-head"><div><p class="eyebrow">BENUTZERKONTO</p><h2 id="authTitle">Anmelden</h2></div><button class="icon-btn" value="cancel" aria-label="Schließen">×</button></div>
+      <div class="tabs"><button type="button" class="tab active" data-auth-mode="login">Anmelden</button><button type="button" class="tab" data-auth-mode="signup">Registrieren</button></div>
+      <label id="fullNameLabel" class="hidden">Name<input id="authFullName" autocomplete="name"></label>
+      <label id="companyLabel" class="hidden">Unternehmen<input id="authCompany" autocomplete="organization"></label>
+      <label>E-Mail<input id="authEmail" type="email" required autocomplete="email"></label>
+      <label>Passwort<input id="authPassword" type="password" required minlength="8" autocomplete="current-password"></label>
+      <p id="authMessage" class="form-message"></p>
+      <div class="dialog-actions"><button type="button" id="resetPassword" class="btn ghost">Passwort zurücksetzen</button><button type="submit" class="btn primary">Weiter</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="substanceDialog" class="dialog">
+    <form id="substanceForm" method="dialog" class="dialog-card wide-card">
+      <div class="dialog-head"><div><p class="eyebrow">KATASTEREINTRAG</p><h2 id="formTitle">Gefahrstoff anlegen</h2></div><button class="icon-btn" value="cancel" aria-label="Schließen">×</button></div>
+      <input id="recordId" type="hidden">
+      <div class="form-section"><h3>1. Identifikation und Verwendung</h3><div class="form-grid">
+        <label>Kataster-Nr.*<input id="inventoryNumber" required placeholder="GS-0001"></label>
+        <label>Produktname*<input id="productName" required></label>
+        <label>Hersteller / Lieferant<input id="manufacturer"></label>
+        <label>Produkt-/Artikelnummer<input id="productCode"></label>
+        <label class="wide">Verwendungszweck / Tätigkeit<input id="intendedUse"></label>
+        <label class="wide">Arbeitsbereiche mit möglicher Exposition*<input id="workAreas" required placeholder="z. B. Reinigung, Technik"></label>
+      </div></div>
+
+      <div class="form-section"><h3>2. Einstufung und Eigenschaften</h3><div class="form-grid">
+        <label class="wide">Einstufung oder gefährliche Eigenschaften*<textarea id="classification" required rows="2" placeholder="z. B. Skin Corr. 1A; H314"></textarea></label>
+        <label>Signalwort<select id="signalWord"><option value="">Kein Signalwort</option><option>Gefahr</option><option>Achtung</option></select></label>
+        <label>GHS-Piktogramme<input id="pictograms" placeholder="GHS05, GHS07"></label>
+        <label>H-Sätze<input id="hStatements" placeholder="H314, H335"></label>
+        <label>EUH-Sätze<input id="euhStatements" placeholder="EUH071"></label>
+        <label class="wide">Weitere gefährliche Eigenschaften<textarea id="dangerousProperties" rows="2"></textarea></label>
+      </div></div>
+
+      <div class="form-section"><h3>3. Menge, Lagerung und SDB</h3><div class="form-grid">
+        <label>Verwendeter Mengenbereich*<input id="quantityRange" required placeholder="z. B. 1–10 l/Monat"></label>
+        <label>Maximale Lagermenge<input id="storageQuantity" placeholder="z. B. 25 l"></label>
+        <label>SDB-Stand<input id="sdsDate" type="date"></label>
+        <label>SDB-Sprache<input id="sdsLanguage" value="Deutsch"></label>
+        <label class="wide">SDB-Verweis / Link*<input id="sdsReference" required placeholder="interner Pfad oder https://…"></label>
+        <label>SDB zuletzt geprüft<input id="sdsVerifiedAt" type="date"></label>
+        <label>Prüfintervall SDB<select id="sdsReviewMonths"><option value="12">12 Monate</option><option value="24" selected>24 Monate</option><option value="36">36 Monate</option></select></label>
+      </div></div>
+
+      <div class="form-section"><h3>4. Gefährdungsbeurteilung und Folgedokumente</h3><div class="form-grid">
+        <label>GBU-Status<select id="riskStatus"><option>offen</option><option>in Bearbeitung</option><option>aktuell</option><option>Überarbeitung fällig</option></select></label>
+        <label>BA-Status<select id="baStatus"><option>offen</option><option>Entwurf</option><option>in Prüfung</option><option>freigegeben</option><option>nicht erforderlich</option></select></label>
+        <label>Substitutionsprüfung<select id="substitutionStatus"><option>offen</option><option>in Prüfung</option><option>Ersatz möglich</option><option>kein geeigneter Ersatz</option><option>nicht erforderlich</option></select></label>
+        <label>Substitution geprüft am<input id="substitutionDate" type="date"></label>
+        <label>CMR-Kategorie<input id="cmrCategory" placeholder="z. B. 1A, 1B, 2"></label>
+        <label class="check"><input id="exposureRegister" type="checkbox"><span>Expositionsverzeichnis prüfen/führen</span></label>
+        <label>Zulassung/Beschränkung<select id="authorizationStatus"><option>nicht relevant</option><option>zu prüfen</option><option>zulassungspflichtig</option><option>beschränkt</option><option>Verwendung untersagt</option></select></label>
+        <label>Status<select id="recordStatus"><option value="active">Aktiv</option><option value="blocked">Gesperrt</option><option value="archived">Archiviert</option></select></label>
+        <label class="wide">Hinweise / Maßnahmen<textarea id="notes" rows="3"></textarea></label>
+      </div></div>
+
+      <p id="formMessage" class="form-message"></p>
+      <div class="dialog-actions"><button type="button" id="deleteRecord" class="btn danger hidden">Eintrag archivieren</button><button value="cancel" class="btn ghost">Abbrechen</button><button id="saveRecord" type="submit" class="btn primary">Speichern</button></div>
+    </form>
+  </dialog>
+
+  <dialog id="detailDialog" class="dialog">
+    <div class="dialog-card detail-card">
+      <div class="dialog-head"><div><p class="eyebrow">DETAILANSICHT</p><h2 id="detailTitle"></h2></div><button class="icon-btn" data-close-detail aria-label="Schließen">×</button></div>
+      <div id="detailContent"></div>
+      <div class="dialog-actions"><button class="btn ghost" data-close-detail>Schließen</button><button id="editFromDetail" class="btn primary">Bearbeiten</button></div>
+    </div>
+  </dialog>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/config.js?v=1"></script>
+  <script src="assets/app.js?v=1"></script>
+</body>
+</html>
