@@ -10,5 +10,28 @@
     if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',render,{once:true});else render();
     return;
   }
+
+  const ensureNewRecordDefaults=()=>{
+    const defaults={
+      riskStatus:'offen',
+      baStatus:'offen',
+      substitutionStatus:'offen',
+      authorizationStatus:'nicht relevant',
+      recordStatus:'active',
+      sdsReviewMonths:'24'
+    };
+    for(const [id,value] of Object.entries(defaults)){
+      const el=document.getElementById(id);
+      if(el&&!el.value)el.value=value;
+    }
+  };
+
+  document.addEventListener('click',event=>{
+    if(event.target.closest('#newSubstance'))setTimeout(ensureNewRecordDefaults,0);
+  });
+  document.addEventListener('submit',event=>{
+    if(event.target?.id==='substanceForm')ensureNewRecordDefaults();
+  },true);
+
   document.write('<script src="assets/app-core.js?v=2"><\/script><script src="assets/production-auth.js?v=2"><\/script>');
 })();
