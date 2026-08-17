@@ -17,9 +17,13 @@ jobs:
       - uses: actions/checkout@v7
       - name: JavaScript-Syntax prüfen
         run: |
-          for file in assets/config.js assets/app.js assets/app-core.js assets/production-auth.js; do node --check "$file"; done
-      - name: Deploy-Lizenzvertrag prüfen
+          for file in assets/config.js assets/app.js assets/app-core.js assets/werk-context.js assets/production-auth.js; do node --check "$file"; done
+      - name: Werk- und Lizenzisolierung prüfen
         run: |
+          grep -Fq "assets/werk-context.js" assets/app.js
+          grep -Fq 'origin_werk_id' assets/werk-context.js
+          grep -Fq ".eq('origin_werk_id',ehsOriginWerkId)" assets/werk-context.js
+          grep -Fq 'selectedWerk' assets/werk-context.js
           test -f .github/workflows/ehs-module-gate.yml
           grep -Fq 'defidev-legal/ehs-entitlement-gate.js' .github/workflows/ehs-module-gate.yml
           grep -Fq 'ehs_gefahrstoffkataster_monthly' .github/workflows/ehs-module-gate.yml
