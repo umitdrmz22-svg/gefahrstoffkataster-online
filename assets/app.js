@@ -11,7 +11,7 @@
       baAppUrl:'../ba-generator/'
     });
     document.documentElement.dataset.appMode='demo';
-    document.write('<script src="assets/app-core.js?v=6"><\/script><script src="assets/demo-enhancements.js?v=2"><\/script>');
+    document.write('<script src="assets/app-core.js?v=7"><\/script><script src="assets/demo-enhancements.js?v=3"><\/script>');
     return;
   }
 
