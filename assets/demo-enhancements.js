@@ -14,6 +14,23 @@
     note.setAttribute('role','status');
     note.innerHTML='<strong>Präsentationsmodus</strong><span>Alle Einträge sind fiktive lokale Beispieldaten. Es werden keine Unternehmens- oder Personendaten an ein Backend übertragen.</span><button type="button" id="resetDemoData" class="btn ghost">Demo zurücksetzen</button>';
     const content=$('.content');if(content)content.prepend(note);
+    document.addEventListener('click',event=>{
+      const row=event.target.closest('#substanceRows [data-id]');
+      if(!row)return;
+      setTimeout(()=>{
+        const actions=$('#detailDialog .dialog-actions');
+        if(!actions||actions.querySelector('[data-demo-ba]'))return;
+        const title=$('#detailTitle')?.textContent||'';
+        const [inventory,product]=title.split(' · ');
+        const a=document.createElement('a');
+        a.dataset.demoBa='1';a.className='btn ghost';
+        const url=new URL('../ba-generator/',location.href);
+        url.searchParams.set('demo','1');url.searchParams.set('source','gefahrstoffkataster');
+        if(inventory)url.searchParams.set('kataster',inventory);if(product)url.searchParams.set('produkt',product);
+        a.href=url.toString();a.textContent='BA Studio öffnen';
+        actions.insertBefore(a,actions.lastElementChild||null);
+      },0);
+    });
     $('#resetDemoData')?.addEventListener('click',()=>{
       localStorage.removeItem('gefahrstoffkataster-demo-v1');
       location.reload();
