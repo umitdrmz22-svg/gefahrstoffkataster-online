@@ -18,8 +18,8 @@ const demoSeed=[
 document.addEventListener('DOMContentLoaded',init);
 async function init(){bindUi();if(hasCloud){$('#connectionBadge').textContent='Supabase verbunden';$('#connectionBadge').className='badge online';const {data}=await sb.auth.getSession();session=data.session;sb.auth.onAuthStateChange((_e,s)=>{session=s;organization=null;refreshIdentity();loadRecords();});}else{$('#connectionBadge').textContent='Demo-Modus';records=loadDemo();render();}refreshIdentity();if(hasCloud&&session)await loadRecords();}
 function bindUi(){
- $('[data-close-own-dialog]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();b.closest('dialog')?.close();}));
- $('dialog form button[value="cancel"]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();b.closest('dialog')?.close();}));
+ $$('[data-close-own-dialog]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();b.closest('dialog')?.close();}));
+ $$('dialog form button[value="cancel"]').forEach(b=>b.addEventListener('click',e=>{e.preventDefault();b.closest('dialog')?.close();}));
  $('#newSubstance').addEventListener('click',()=>openForm());$('#searchInput').addEventListener('input',render);$('#filterStatus').addEventListener('change',render);$('#filterReview').addEventListener('change',render);
  $('#authButton').addEventListener('click',()=>$('#authDialog').showModal());$('#logoutButton').addEventListener('click',()=>sb?.auth.signOut());
  $$('[data-auth-mode]').forEach(b=>b.addEventListener('click',()=>setAuthMode(b.dataset.authMode)));
