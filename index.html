@@ -84,7 +84,7 @@
 
   <dialog id="authDialog" class="dialog small-dialog">
     <form id="authForm" method="dialog" class="dialog-card">
-      <div class="dialog-head"><div><p class="eyebrow">BENUTZERKONTO</p><h2 id="authTitle">Anmelden</h2></div><button class="icon-btn" value="cancel" aria-label="Schließen">×</button></div>
+      <div class="dialog-head"><div><p class="eyebrow">BENUTZERKONTO</p><h2 id="authTitle">Anmelden</h2></div><button type="button" class="icon-btn" value="cancel" data-close-own-dialog aria-label="Schließen">×</button></div>
       <div class="tabs"><button type="button" class="tab active" data-auth-mode="login">Anmelden</button><button type="button" class="tab" data-auth-mode="signup">Registrieren</button></div>
       <label id="fullNameLabel" class="hidden">Name<input id="authFullName" autocomplete="name"></label>
       <label id="companyLabel" class="hidden">Unternehmen<input id="authCompany" autocomplete="organization"></label>
@@ -97,7 +97,7 @@
 
   <dialog id="substanceDialog" class="dialog">
     <form id="substanceForm" method="dialog" class="dialog-card wide-card">
-      <div class="dialog-head"><div><p class="eyebrow">KATASTEREINTRAG</p><h2 id="formTitle">Gefahrstoff anlegen</h2></div><button class="icon-btn" value="cancel" aria-label="Schließen">×</button></div>
+      <div class="dialog-head"><div><p class="eyebrow">KATASTEREINTRAG</p><h2 id="formTitle">Gefahrstoff anlegen</h2></div><button type="button" class="icon-btn" value="cancel" data-close-own-dialog aria-label="Schließen">×</button></div>
       <input id="recordId" type="hidden">
       <div class="form-section"><h3>1. Identifikation und Verwendung</h3><div class="form-grid">
         <label>Kataster-Nr.*<input id="inventoryNumber" required placeholder="GS-0001"></label>
